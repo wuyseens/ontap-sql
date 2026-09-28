@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ôn tập SQL Server — Lớp CNTT</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #1e3c72;
+    --accent: #667eea;
+    --accent2: #764ba2;
+    --success: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --bg: #f5f7fb;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: var(--bg);
+    color: #333;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ============ HERO / CHÀO MỪNG ============ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: moveBg 30s linear infinite;
+  }
+  @keyframes moveBg {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(40px, 40px); }
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    text-align: center;
+    color: #fff;
+    animation: slideUp 0.9s ease-out;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-icon {
+    font-size: 90px;
+    display: inline-block;
+    animation: bounce 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  .hero h1 {
+    font-size: 42px;
+    margin: 20px 0 12px;
+    line-height: 1.2;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .hero .subtitle {
+    font-size: 18px;
+    opacity: 0.95;
+    margin-bottom: 25px;
+    font-weight: 400;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 25px 0;
+  }
+  .hero-meta span {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    max-width: 500px;
+    margin: 30px auto;
+  }
+  .hero-stat {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 18px 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.3s;
+  }
+  .hero-stat:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-4px);
+  }
+  .hero-stat .num {
+    font-size: 28px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .hero-stat .lbl {
+    font-size: 12px;
+    opacity: 0.9;
+  }
+  .scroll-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    color: var(--primary);
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 15px;
+    transition: all 0.3s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    border: none;
+    cursor: pointer;
+  }
+  .scroll-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+  }
+  .scroll-arrow {
+    animation: arrowDown 1.5s ease-in-out infinite;
+  }
+  @keyframes arrowDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* ============ SECTION BÀI TẬP ============ */
+  .lessons-section {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .section-header h2 {
+    font-size: 32px;
+    color: var(--primary);
+    margin-bottom: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-header p {
+    color: #666;
+    font-size: 16px;
+  }
+  .toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .tool-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--primary);
+    background: #fff;
+    color: var(--primary);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tool-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+  .tool-btn.primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .tool-btn.primary:hover {
+    background: #152a52;
+  }
+  .tool-btn.danger {
+    border-color: var(--danger);
+    color: var(--danger);
+  }
+  .tool-btn.danger:hover {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  /* ============ CARDS GRID ============ */
+  .lessons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .lesson-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 220px;
+    animation: cardIn 0.4s ease-out backwards;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .lesson-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
+    border-color: var(--accent);
+  }
+  .lesson-card .icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+    display: block;
+  }
+  .lesson-card .title {
+    font-size: 19px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .lesson-card .desc {
+    color: #666;
+    font-size: 14px;
+    flex-grow: 1;
+    margin-bottom: 15px;
+  }
+  .lesson-card .meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .lesson-card .meta span {
+    background: #f0f4ff;
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+  .lesson-card .actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .lesson-card:hover .actions { opacity: 1; }
+  .action-btn {
+    background: rgba(255,255,255,0.95);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.2s;
+  }
+  .action-btn:hover {
+    transform: scale(1.15);
+  }
+  .action-btn.delete:hover { background: var(--danger); color: #fff; }
+  .action-btn.toggle:hover { background: var(--warning); }
+
+  .lesson-card.hidden {
+    opacity: 0.4;
+    background: #f0f0f0;
+  }
+  .lesson-card.hidden::after {
+    content: '🙈 ĐÃ ẨN';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-8deg);
+    font-size: 20px;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 2px;
+    pointer-events: none;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    grid-column: 1 / -1;
+  }
+  .empty-state .icon { font-size: 80px; margin-bottom: 15px; display: block; opacity: 0.5; }
+  .empty-state p { font-size: 16px; }
+
+  /* ============ MODAL ============ */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+    animation: fadeIn 0.2s ease-out;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-overlay.show { display: block; }
+
+  .modal {
+    background: #fff;
+    max-width: 900px;
+    margin: 30px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    animation: modalIn 0.3s ease-out;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-header {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    padding: 24px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .modal-header h3 {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .modal-close {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .modal-close:hover {
+    background: rgba(255,255,255,0.35);
+    transform: rotate(90deg);
+  }
+  .modal-tabs {
+    display: flex;
+    background: #f0f2f5;
+    border-bottom: 2px solid #e0e0e0;
+    position: sticky;
+    top: 84px;
+    z-index: 9;
+  }
+  .modal-tab {
+    flex: 1;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: #666;
+    font-size: 14px;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+  }
+  .modal-tab:hover { background: #e8eaed; }
+  .modal-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: #fff;
+  }
+  .modal-body {
+    padding: 25px 30px;
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+  }
+  .modal-panel { display: none; }
+  .modal-panel.active { display: block; }
+
+  /* Nội dung trong modal */
+  .modal-body h3 {
+    color: var(--primary);
+    margin: 20px 0 10px;
+    font-size: 17px;
+    border-left: 4px solid var(--accent);
+    padding-left: 12px;
+  }
+  .modal-body h3:first-child { margin-top: 0; }
+  .modal-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  .modal-body th {
+    background: var(--primary);
+    color: #fff;
+    padding: 10px;
+    text-align: left;
+    font-size: 13px;
+  }
+  .modal-body td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .modal-body tr:nth-child(even) { background: #f8f9fa; }
+  .modal-body code {
+    background: #f4f4f4;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+    color: #c7254e;
+    font-size: 13px;
+  }
+  .modal-body ol { padding-left: 25px; line-height: 2; }
+
+  /* Tự luận */
+  .essay-item {
+    background: #f8f9fa;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    border-left: 4px solid var(--success);
+  }
+  .essay-item .q-text {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--primary);
+  }
+  .toggle-answer {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .toggle-answer:hover { background: #152a52; }
+  .answer {
+    display: none;
+    margin-top: 12px;
+    padding: 14px;
+    background: #d4edda;
+    border-radius: 8px;
+    border-left: 4px solid var(--success);
+    font-size: 14px;
+  }
+  .answer.show { display: block; }
+
+  /* Trắc nghiệm */
+  .quiz-question {
+    background: #f8f9fa;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    border-left: 4px solid var(--primary);
+  }
+  .quiz-question .q-text {
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--primary);
+  }
+  .option {
+    display: block;
+    padding: 10px 14px;
+    margin: 6px 0;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+  .option:hover { border-color: var(--accent); background: #f0f4ff; }
+  .option input { margin-right: 8px; }
+  .option.correct {
+    background: #d4edda;
+    border-color: var(--success);
+    color: #155724;
+    font-weight: 600;
+  }
+  .option.wrong {
+    background: #f8d7da;
+    border-color: var(--danger);
+    color: #721c24;
+  }
+  .option.disabled { pointer-events: none; opacity: 0.75; }
+  .explanation {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background: #fff3cd;
+    border-left: 4px solid var(--warning);
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .explanation.show { display: block; }
+  .progress-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    margin: 12px 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--success), #20c997);
+    transition: width 0.3s;
+    width: 0%;
+  }
+  .btn-group { text-align: center; margin-top: 20px; }
+  .btn {
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 4px;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #152a52; transform: translateY(-2px); }
+  .btn-danger {
+    background: var(--danger);
+    color: #fff;
+  }
+  .btn-danger:hover { background: #a71d2a; }
+  .result-box {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border-radius: 12px;
+    text-align: center;
+  }
+  .result-box.show { display: block; }
+  .result-box .score {
+    font-size: 42px;
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .result-box .best {
+    background: rgba(255,255,255,0.15);
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  /* Modal thêm bài */
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+  }
+  .form-hint {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--primary);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 2000;
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Footer */
+  footer {
+    background: var(--primary);
+    color: #fff;
+    padding: 25px 20px;
+    text-align: center;
+    font-size: 13px;
+    margin-top: 40px;
+  }
+  footer p { opacity: 0.9; }
+  footer p + p { margin-top: 6px; opacity: 0.7; font-size: 12px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 30px; }
+    .hero-icon { font-size: 68px; }
+    .hero .subtitle { font-size: 15px; }
+    .hero-stats { grid-template-columns: 1fr; gap: 10px; max-width: 100%; }
+    .hero-stat { padding: 14px 10px; }
+    .hero-stat .num { font-size: 22px; }
+    .section-header h2 { font-size: 24px; }
+    .lessons-section { padding: 40px 15px; }
+    .lessons-grid { grid-template-columns: 1fr; }
+    .modal { margin: 10px auto; border-radius: 12px; }
+    .modal-header { padding: 16px 18px; }
+    .modal-header h3 { font-size: 16px; }
+    .modal-tabs { top: 68px; }
+    .modal-tab { padding: 12px 5px; font-size: 12px; }
+    .modal-body { padding: 18px 15px; max-height: calc(100vh - 200px); }
+    .modal-body table { font-size: 12px; }
+    .modal-body th, .modal-body td { padding: 6px 4px; }
+    .scroll-btn { padding: 12px 24px; font-size: 14px; }
+    .tool-btn { padding: 8px 14px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-content">
+    <span class="hero-icon">📚</span>
+    <h1>Chào mừng đến với<br>Trang Ôn Tập SQL Server</h1>
+    <p class="subtitle">Kiểu dữ liệu — Tự luận & Trắc nghiệm</p>
+
+    <div class="hero-meta">
+      <span>🎓 Lớp CNTT</span>
+      <span>🏫 Trung cấp Bách Nghệ</span>
+      <span>📖 Trang 15–19</span>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num" id="stat-lessons">0</span>
+        <span class="lbl">Bài tập</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num" id="stat-essay">0</span>
+        <span class="lbl">Câu tự luận</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num" id="stat-quiz">0</span>
+        <span class="lbl">Câu trắc nghiệm</span>
+      </div>
+    </div>
+
+    <button class="scroll-btn" onclick="scrollToLessons()">
+      🚀 Bắt đầu học
+      <span class="scroll-arrow">↓</span>
+    </button>
+  </div>
+</section>
+
+<!-- ============ DANH SÁCH BÀI TẬP ============ -->
+<section class="lessons-section" id="lessons">
+  <div class="section-header">
+    <h2>📖 Danh sách bài tập</h2>
+    <p>Nhấn vào bài để xem chi tiết — Nhấn nút 🔧 để thêm/xóa bài</p>
+  </div>
+
+  <div class="toolbar">
+    <button class="tool-btn" id="adminToggle" onclick="toggleAdmin()">
+      🔧 Bật chế độ quản lý
+    </button>
+    <button class="tool-btn primary" id="addBtn" onclick="openAddModal()" style="display:none">
+      ➕ Thêm bài tập
+    </button>
+    <button class="tool-btn danger" id="resetBtn" onclick="resetAll()" style="display:none">
+      🔄 Khôi phục mặc định
+    </button>
+  </div>
+
+  <div class="lessons-grid" id="lessonsGrid"></div>
+</section>
+
+<footer>
+  <p>📚 Trang ôn tập SQL Server — Made with ❤️ by Lớp CNTT</p>
+  <p>Nguồn: Giáo trình Hệ QTCSDL SQL Server — Trường Trung cấp Bách Nghệ TP.HCM</p>
+</footer>
+
+<!-- ============ MODAL XEM BÀI ============ -->
+<div class="modal-overlay" id="viewModal" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="modalTitle">📚 Bài tập</h3>
+      <button class="modal-close" onclick="closeViewModal()">×</button>
+    </div>
+    <div class="modal-tabs" id="modalTabs"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL THÊM BÀI ============ -->
+<div class="modal-overlay" id="addModal" onclick="closeAddModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3>➕ Thêm bài tập mới</h3>
+      <button class="modal-close" onclick="closeAddModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>📌 Tiêu đề bài tập</label>
+        <input type="text" id="newTitle" placeholder="Ví dụ: Ràng buộc dữ liệu">
+      </div>
+      <div class="form-group">
+        <label>📝 Mô tả ngắn</label>
+        <input type="text" id="newDesc" placeholder="Mô tả ngắn về bài tập">
+      </div>
+      <div class="form-group">
+        <label>🎨 Icon (emoji)</label>
+        <input type="text" id="newIcon" placeholder="📚" value="📚" maxlength="4">
+      </div>
+      <div class="form-group">
+        <label>📖 Nội dung lý thuyết (HTML)</label>
+        <textarea id="newContent" placeholder="<h3>Tiêu đề</h3><p>Nội dung...</p>"></textarea>
+        <div class="form-hint">💡 Có thể paste HTML: &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;table&gt;...</div>
+      </div>
+      <div class="form-group">
+        <label>✍️ Câu hỏi tự luận (mỗi dòng 1 câu, dạng: Câu hỏi | Đáp án)</label>
+        <textarea id="newEssay" placeholder="Câu 1 là gì? | Đáp án câu 1
+Câu 2 là gì? | Đáp án câu 2"></textarea>
+        <div class="form-hint">💡 Mỗi câu 1 dòng, ngăn cách giữa câu hỏi và đáp án bằng dấu |</div>
+      </div>
+      <div class="form-group">
+        <label>🎯 Câu hỏi trắc nghiệm (mỗi dòng 1 câu, dạng: Câu hỏi | A | B | C | D | Đáp án đúng | Giải thích)</label>
+        <textarea id="newQuiz" placeholder="Câu hỏi? | Đáp án A | Đáp án B | Đáp án C | Đáp án D | A | Giải thích"></textarea>
+        <div class="form-hint">💡 Đáp án đúng ghi A/B/C/D. Có thể bỏ trống phần giải thích</div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="saveNewLesson()">💾 Lưu bài tập</button>
+        <button class="btn btn-danger" onclick="closeAddModal()">❌ Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ DỮ LIỆU MẶC ĐỊNH ============
+const DEFAULT_LESSONS = [
+  {
+    id: 'bai1',
+    icon: '📚',
+    title: 'Kiểu dữ liệu SQL Server',
+    desc: 'Tổng hợp kiểu dữ liệu từ trang 15–19: BINARY, TEXT, DATE/TIME, NUMERIC, MONETARY...',
+    visible: true,
+    content: `
+      <h3>1. Nhóm BINARY (Nhị phân)</h3>
+      <table>
+        <tr><th>Cú pháp</th><th>Kích thước tối đa</th><th>Giải thích</th></tr>
+        <tr><td><code>BINARY(n)</code></td><td>n byte (1–8000)</td><td>Nhị phân cố định, pad 0x00</td></tr>
+        <tr><td><code>VARBINARY(n)</code></td><td>≤ n byte (1–8000)</td><td>Nhị phân biến đổi</td></tr>
+        <tr><td><code>VARBINARY(MAX)</code></td><td>2 GB</td><td>Nhị phân lớn</td></tr>
+        <tr><td><code>IMAGE</code></td><td>~2 GB</td><td>⚠️ Deprecated</td></tr>
+      </table>
+      <h3>2. Nhóm TEXT (Chuỗi ký tự) — QUAN TRỌNG NHẤT</h3>
+      <table>
+        <tr><th>Cú pháp</th><th>Kích thước tối đa</th><th>Giải thích</th></tr>
+        <tr><td><code>CHAR(n)</code></td><td>8,000 ký tự (n byte)</td><td>ASCII, cố định, pad khoảng trắng</td></tr>
+        <tr><td><code>NCHAR(n)</code></td><td>4,000 ký tự (2n byte)</td><td>Unicode, cố định</td></tr>
+        <tr><td><code>VARCHAR(n)</code></td><td>8,000 ký tự</td><td>ASCII, biến đổi ⭐</td></tr>
+        <tr><td><code>NVARCHAR(n)</code></td><td>4,000 ký tự</td><td>Unicode, biến đổi ⭐</td></tr>
+        <tr><td><code>VARCHAR(MAX)</code></td><td>~2 GB</td><td>Thay TEXT</td></tr>
+        <tr><td><code>NVARCHAR(MAX)</code></td><td>~2 GB</td><td>Thay NTEXT</td></tr>
+        <tr><td><code>TEXT</code></td><td>2,147,483,647 ký tự</td><td>⚠️ Deprecated</td></tr>
+        <tr><td><code>NTEXT</code></td><td>1,073,741,823 ký tự</td><td>⚠️ Deprecated</td></tr>
+      </table>
+      <h3>3. Nhóm DATE/TIME (Ngày – Tháng – Thời gian)</h3>
+      <table>
+        <tr><th>Cú pháp</th><th>Kích thước</th><th>Miền giá trị</th><th>Giải thích</th></tr>
+        <tr><td><code>DATE</code></td><td>3 byte</td><td>0001-01-01 → 9999-12-31</td><td>Chỉ ngày</td></tr>
+        <tr><td><code>TIME(n)</code></td><td>3–5 byte</td><td>00:00:00 → 23:59:59.9999999</td><td>Chỉ giờ</td></tr>
+        <tr><td><code>DATETIME</code></td><td>8 byte</td><td>1753 → 9999</td><td>3.33 ms</td></tr>
+        <tr><td><code>DATETIME2(n)</code></td><td>6–8 byte</td><td>0001 → 9999</td><td>100 ns ⭐</td></tr>
+        <tr><td><code>SMALLDATETIME</code></td><td>4 byte</td><td>1900 → 2079</td><td>1 phút</td></tr>
+        <tr><td><code>DATETIMEOFFSET</code></td><td>8–10 byte</td><td>0001 → 9999</td><td>Có múi giờ</td></tr>
+      </table>
+      <h3>4. Nhóm NUMERIC – Số nguyên</h3>
+      <table>
+        <tr><th>Cú pháp</th><th>Kích thước</th><th>Miền giá trị</th></tr>
+        <tr><td><code>BIT</code></td><td>1 bit</td><td>0, 1, NULL</td></tr>
+        <tr><td><code>TINYINT</code></td><td>1 byte</td><td>0 → 255</td></tr>
+        <tr><td><code>SMALLINT</code></td><td>2 byte</td><td>-32,768 → 32,767</td></tr>
+        <tr><td><code>INT</code></td><td>4 byte</td><td>-2,147,483,648 → 2,147,483,647</td></tr>
+        <tr><td><code>BIGINT</code></td><td>8 byte</td><td>±9,223,372,036,854,775,807</td></tr>
+      </table>
+      <h3>5. Nhóm NUMERIC – Số thực</h3>
+      <table>
+        <tr><th>Cú pháp</th><th>Kích thước</th><th>Miền giá trị</th></tr>
+        <tr><td><code>DECIMAL(m,d)</code></td><td>5–17 byte</td><td>±10^38-1 (chính xác)</td></tr>
+        <tr><td><code>DEC(m,d)</code></td><td>5–17 byte</td><td>= DECIMAL</td></tr>
+        <tr><td><code>NUMERIC(m,d)</code></td><td>5–17 byte</td><td>= DECIMAL</td></tr>
+        <tr><td><code>FLOAT(n)</code></td><td>4 hoặc 8 byte</td><td>±1.79E+308 (sai số)</td></tr>
+        <tr><td><code>REAL</code></td><td>4 byte</td><td>±3.40E+38 (sai số)</td></tr>
+      </table>
+      <h3>6. Nhóm MONETARY (Tiền tệ)</h3>
+      <table>
+        <tr><th>Cú pháp</th><th>Kích thước</th><th>Miền giá trị</th></tr>
+        <tr><td><code>SMALLMONEY</code></td><td>4 byte</td><td>-214,748.3648 → 214,748.3647</td></tr>
+        <tr><td><code>MONEY</code></td><td>8 byte</td><td>±922,337,203,685,477.5807</td></tr>
+      </table>
+      <h3>7. Các kiểu khác</h3>
+      <table>
+        <tr><th>Cú pháp</th><th>Kích thước</th><th>Giải thích</th></tr>
+        <tr><td><code>SQL_VARIANT</code></td><td>≤ 8,016 byte</td><td>Đa kiểu</td></tr>
+        <tr><td><code>TIMESTAMP</code></td><td>8 byte</td><td>⚠️ KHÔNG phải ngày giờ!</td></tr>
+        <tr><td><code>UNIQUEIDENTIFIER</code></td><td>16 byte</td><td>GUID</td></tr>
+        <tr><td><code>XML</code></td><td>2 GB</td><td>Dữ liệu XML</td></tr>
+        <tr><td><code>GEOMETRY</code> / <code>GEOGRAPHY</code></td><td>2 GB</td><td>Không gian</td></tr>
+      </table>
+      <h3>⚠️ 5 BẪY KINH ĐIỂN</h3>
+      <ol>
+        <li>Tiếng Việt → phải dùng <code>NVARCHAR</code> + tiền tố <code>N</code></li>
+        <li>Tiền tệ → <code>DECIMAL(m,d)</code>, KHÔNG dùng <code>FLOAT</code></li>
+        <li><code>TIMESTAMP</code> KHÔNG phải ngày giờ</li>
+        <li><code>DEC</code> = <code>DECIMAL</code> = <code>NUMERIC</code></li>
+        <li><code>NVARCHAR(n)</code> max = 4,000</li>
+      </ol>
+    `,
+    essay: [
+      { q: "Trình bày sự khác nhau giữa kiểu CHAR và VARCHAR.",
+        a: "<b>CHAR(n):</b> chuỗi ASCII <b>cố định</b>, luôn chiếm n byte, pad khoảng trắng. Max 8,000.<br><b>VARCHAR(n):</b> chuỗi ASCII <b>biến đổi</b>, chỉ chiếm đúng byte thực tế. Max 8,000." },
+      { q: "Vì sao khi lưu tiếng Việt có dấu phải dùng NVARCHAR?",
+        a: "<b>VARCHAR</b> chỉ lưu ASCII (1 byte/ký tự) → không hỗ trợ tiếng Việt.<br><b>NVARCHAR</b> lưu Unicode (2 byte/ký tự) → hỗ trợ mọi ngôn ngữ. Phải có tiền tố <code>N</code> khi gán." },
+      { q: "Nêu kích thước và miền giá trị của TINYINT, SMALLINT, INT, BIGINT.",
+        a: "<b>TINYINT:</b> 1 byte, 0→255<br><b>SMALLINT:</b> 2 byte, ±32,767<br><b>INT:</b> 4 byte, ±2.1 tỷ<br><b>BIGINT:</b> 8 byte, ±9.2×10^18" },
+      { q: "So sánh DATETIME và DATETIME2.",
+        a: "<b>DATETIME:</b> 8 byte, 1753→9999, ~3.33 ms.<br><b>DATETIME2(n):</b> 6–8 byte, 0001→9999, 100 ns (n=7). Khuyên dùng DATETIME2." },
+      { q: "Vì sao TIMESTAMP KHÔNG phải kiểu ngày giờ?",
+        a: "TIMESTAMP (ROWVERSION) là <b>số nhị phân 8 byte</b> hệ thống tự sinh mỗi khi dòng INSERT/UPDATE. Đánh dấu phiên bản dòng, không phải ngày giờ." },
+      { q: "Vì sao nên dùng DECIMAL thay FLOAT khi lưu tiền?",
+        a: "FLOAT <b>có sai số làm tròn</b>. DECIMAL <b>chính xác tuyệt đối</b>. Ví dụ: 0.1+0.2 FLOAT = 0.30000000000000004 (SAI)." },
+      { q: "Trình bày MONEY và SMALLMONEY.",
+        a: "<b>SMALLMONEY:</b> 4 byte, ±214,748.3647.<br><b>MONEY:</b> 8 byte, ±922,337,203,685,477.5807.<br>MONEY = BIGINT ÷ 10,000." },
+      { q: "Kể tên các kiểu deprecated và thay thế.",
+        a: "TEXT → <code>VARCHAR(MAX)</code><br>NTEXT → <code>NVARCHAR(MAX)</code><br>IMAGE → <code>VARBINARY(MAX)</code>" },
+      { q: "UNIQUEIDENTIFIER có kích thước bao nhiêu?",
+        a: "<b>16 byte</b>. Định dạng GUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx. Dùng cho khóa chính phân tán." },
+      { q: "SQL_VARIANT dùng để làm gì?",
+        a: "Lưu <b>nhiều kiểu khác nhau</b> trong 1 cột. Không chứa: text, ntext, image, timestamp. Max 8,016 byte." }
+    ],
+    quiz: [
+      { q: "Kiểu nào lưu được tiếng Việt có dấu?", options: ["CHAR","VARCHAR","NVARCHAR","TEXT"], correct: 2, explain: "NVARCHAR là Unicode (2 byte/ký tự)." },
+      { q: "NVARCHAR(n) tối đa bao nhiêu ký tự?", options: ["8,000","4,000","2,000","2 GB"], correct: 1, explain: "4000 × 2 = 8000 byte." },
+      { q: "Kiểu nào lưu tiền CHÍNH XÁC?", options: ["FLOAT","REAL","DECIMAL(18,2)","SMALLMONEY"], correct: 2, explain: "DECIMAL chính xác tuyệt đối." },
+      { q: "TIMESTAMP thực chất là gì?", options: ["Ngày giờ","Số nhị phân 8 byte tự sinh","Chuỗi","Số nguyên 4 byte"], correct: 1, explain: "TIMESTAMP = ROWVERSION, không phải ngày giờ." },
+      { q: "Miền giá trị của TINYINT?", options: ["-128→127","0→255","±32,767","0→65,535"], correct: 1, explain: "TINYINT: 1 byte, 0→255." },
+      { q: "Kiểu chính xác 100 nano-giây?", options: ["DATETIME","SMALLDATETIME","DATETIME2","DATE"], correct: 2, explain: "DATETIME2(n) chính xác 100ns khi n=7." },
+      { q: "Kiểu nào đã DEPRECATED?", options: ["VARCHAR(MAX)","NVARCHAR(MAX)","TEXT","VARBINARY(MAX)"], correct: 2, explain: "TEXT, NTEXT, IMAGE deprecated." },
+      { q: "BIGINT chiếm bao nhiêu byte?", options: ["2","4","8","16"], correct: 2, explain: "BIGINT = 8 byte." },
+      { q: "Kiểu TRUE/FALSE trong SQL Server?", options: ["BOOLEAN","BIT","TINYINT","CHAR(1)"], correct: 1, explain: "SQL Server không có BOOLEAN, dùng BIT." },
+      { q: "UNIQUEIDENTIFIER chiếm bao nhiêu byte?", options: ["8","16","32","36"], correct: 1, explain: "16 byte (GUID)." },
+      { q: "Kiểu nào TƯƠNG ĐƯƠNG DECIMAL?", options: ["FLOAT","REAL","NUMERIC","MONEY"], correct: 2, explain: "DEC = DECIMAL = NUMERIC." },
+      { q: "SMALLMONEY có kích thước và miền?", options: ["4 byte, ±214,748.3647","8 byte, ±214,748.3647","4 byte, ±32,767","8 byte, ±922 tỷ"], correct: 0, explain: "SMALLMONEY: 4 byte." }
+    ]
+  }
+];
+
+// ============ QUẢN LÝ DỮ LIỆU ============
+const STORAGE_KEY = 'sql_lessons_v1';
+
+function loadLessons() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch(e) { console.error(e); }
+  return JSON.parse(JSON.stringify(DEFAULT_LESSONS));
+}
+
+function saveLessons() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(lessons));
+}
+
+let lessons = loadLessons();
+let adminMode = false;
+
+// ============ RENDER ============
+function renderLessons() {
+  const grid = document.getElementById('lessonsGrid');
+  if (!lessons.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <span class="icon">📭</span>
+        <p>Chưa có bài tập nào. Nhấn "🔧 Bật chế độ quản lý" để thêm bài!</p>
+      </div>
+    `;
+    updateStats();
+    return;
+  }
+
+  grid.innerHTML = lessons.map((lesson, idx) => `
+    <div class="lesson-card ${lesson.visible ? '' : 'hidden'}" 
+         style="animation-delay: ${idx * 0.05}s"
+         onclick="openLesson('${lesson.id}')">
+      <div class="actions" onclick="event.stopPropagation()">
+        <button class="action-btn toggle" title="Ẩn/Hiện" onclick="toggleVisible('${lesson.id}')">
+          ${lesson.visible ? '👁️' : '🙈'}
+        </button>
+        <button class="action-btn delete" title="Xóa" onclick="deleteLesson('${lesson.id}')">🗑️</button>
+      </div>
+      <span class="icon">${lesson.icon || '📚'}</span>
+      <div class="title">${escapeHtml(lesson.title)}</div>
+      <div class="desc">${escapeHtml(lesson.desc || '')}</div>
+      <div class="meta">
+        <span>✍️ ${lesson.essay?.length || 0} tự luận</span>
+        <span>🎯 ${lesson.quiz?.length || 0} trắc nghiệm</span>
+      </div>
+    </div>
+  `).join('');
+
+  updateStats();
+}
+
+function updateStats() {
+  const visibleLessons = lessons.filter(l => l.visible);
+  document.getElementById('stat-lessons').textContent = visibleLessons.length;
+  document.getElementById('stat-essay').textContent = visibleLessons.reduce((s, l) => s + (l.essay?.length || 0), 0);
+  document.getElementById('stat-quiz').textContent = visibleLessons.reduce((s, l) => s + (l.quiz?.length || 0), 0);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ============ ADMIN MODE ============
+function toggleAdmin() {
+  adminMode = !adminMode;
+  const btn = document.getElementById('adminToggle');
+  const addBtn = document.getElementById('addBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const actions = document.querySelectorAll('.lesson-card .actions');
+
+  if (adminMode) {
+    btn.textContent = '✅ Đang bật quản lý';
+    btn.classList.add('primary');
+    addBtn.style.display = 'inline-flex';
+    resetBtn.style.display = 'inline-flex';
+    actions.forEach(a => a.style.opacity = '1');
+    showToast('🔧 Đã bật chế độ quản lý');
+  } else {
+    btn.textContent = '🔧 Bật chế độ quản lý';
+    btn.classList.remove('primary');
+    addBtn.style.display = 'none';
+    resetBtn.style.display = 'none';
+    actions.forEach(a => a.style.opacity = '');
+    showToast('✅ Đã tắt chế độ quản lý');
+  }
+}
+
+function toggleVisible(id) {
+  const lesson = lessons.find(l => l.id === id);
+  if (!lesson) return;
+  lesson.visible = !lesson.visible;
+  saveLessons();
+  renderLessons();
+  showToast(lesson.visible ? '👁️ Đã hiện bài' : '🙈 Đã ẩn bài');
+}
+
+function deleteLesson(id) {
+  const lesson = lessons.find(l => l.id === id);
+  if (!lesson) return;
+  if (!confirm(`Bạn chắc chắn muốn XÓA bài "${lesson.title}"?\n\nHành động này không thể hoàn tác!`)) return;
+  lessons = lessons.filter(l => l.id !== id);
+  saveLessons();
+  renderLessons();
+  showToast('🗑️ Đã xóa bài tập');
+}
+
+function resetAll() {
+  if (!confirm('Khôi phục tất cả bài tập về mặc định?\n\nMọi thay đổi của bạn sẽ mất!')) return;
+  lessons = JSON.parse(JSON.stringify(DEFAULT_LESSONS));
+  saveLessons();
+  renderLessons();
+  showToast('🔄 Đã khôi phục mặc định');
+}
+
+// ============ MODAL XEM BÀI ============
+let currentLesson = null;
+let currentTab = 'content';
+
+function openLesson(id) {
+  currentLesson = lessons.find(l => l.id === id);
+  if (!currentLesson) return;
+
+  document.getElementById('modalTitle').innerHTML = `${currentLesson.icon || '📚'} ${escapeHtml(currentLesson.title)}`;
+
+  // Render tabs
+  const tabs = document.getElementById('modalTabs');
+  tabs.innerHTML = `
+    <div class="modal-tab active" onclick="switchModalTab('content', this)">📖 Lý thuyết</div>
+    <div class="modal-tab" onclick="switchModalTab('essay', this)">✍️ Tự luận (${currentLesson.essay?.length || 0})</div>
+    <div class="modal-tab" onclick="switchModalTab('quiz', this)">🎯 Trắc nghiệm (${currentLesson.quiz?.length || 0})</div>
+  `;
+
+  // Render nội dung
+  renderModalContent();
+
+  document.getElementById('viewModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function switchModalTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderModalContent();
+}
+
+function renderModalContent() {
+  const body = document.getElementById('modalBody');
+  if (currentTab === 'content') {
+    body.innerHTML = `<div class="modal-panel active">${currentLesson.content || '<p>Chưa có nội dung.</p>'}</div>`;
+  } else if (currentTab === 'essay') {
+    if (!currentLesson.essay?.length) {
+      body.innerHTML = '<div class="modal-panel active"><p style="text-align:center;color:#999;padding:30px">Chưa có câu hỏi tự luận.</p></div>';
+    } else {
+      body.innerHTML = `<div class="modal-panel active">${
+        currentLesson.essay.map((item, i) => `
+          <div class="essay-item">
+            <div class="q-text">Câu ${i+1}: ${escapeHtml(item.q)}</div>
+            <button class="toggle-answer" onclick="toggleAnswer(${i})">👁️ Xem đáp án</button>
+            <div class="answer" id="ans-${i}">${item.a}</div>
+          </div>
+        `).join('')
+      }</div>`;
+    }
+  } else if (currentTab === 'quiz') {
+    if (!currentLesson.quiz?.length) {
+      body.innerHTML = '<div class="modal-panel active"><p style="text-align:center;color:#999;padding:30px">Chưa có câu hỏi trắc nghiệm.</p></div>';
+    } else {
+      body.innerHTML = `
+        <div class="modal-panel active">
+          <div class="progress-bar"><div class="progress-fill" id="progress-${currentLesson.id}"></div></div>
+          ${currentLesson.quiz.map((item, i) => `
+            <div class="quiz-question">
+              <div class="q-text">Câu ${i+1}: ${escapeHtml(item.q)}</div>
+              ${item.options.map((opt, j) => `
+                <label class="option" id="opt-${currentLesson.id}-${i}-${j}" onclick="selectQuizOption(${i}, ${j})">
+                  <input type="radio" name="q-${currentLesson.id}-${i}" value="${j}"> ${String.fromCharCode(65+j)}. ${escapeHtml(opt)}
+                </label>
+              `).join('')}
+              <div class="explanation" id="exp-${currentLesson.id}-${i}">
+                <b>💡 Giải thích:</b> ${escapeHtml(item.explain || '')}
+              </div>
+            </div>
+          `).join('')}
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="submitLessonQuiz()">📊 Nộp bài</button>
+            <button class="btn btn-danger" onclick="resetLessonQuiz()">🔄 Làm lại</button>
+          </div>
+          <div class="result-box" id="result-${currentLesson.id}">
+            <h3>Kết quả của bạn</h3>
+            <div class="score" id="score-${currentLesson.id}">0/0</div>
+            <p id="feedback-${currentLesson.id}"></p>
+            <div class="best" id="best-${currentLesson.id}"></div>
+          </div>
+        </div>
+      `;
+      // Reset
+      if (!window.quizState) window.quizState = {};
+      window.quizState[currentLesson.id] = { answered: new Set(), correct: 0 };
+    }
+  }
+  // Scroll modal body to top
+  body.scrollTop = 0;
+}
+
+function closeViewModal() {
+  document.getElementById('viewModal').classList.remove('show');
+  document.body.style.overflow = '';
+  currentLesson = null;
+}
+
+function closeModal(e) {
+  if (e.target.id === 'viewModal') closeViewModal();
+}
+
+// ============ ESSAY ============
+function toggleAnswer(i) {
+  const el = document.getElementById('ans-' + i);
+  const btn = el.previousElementSibling;
+  el.classList.toggle('show');
+  btn.textContent = el.classList.contains('show') ? '🙈 Ẩn đáp án' : '👁️ Xem đáp án';
+}
+
+// ============ QUIZ ============
+function selectQuizOption(qIdx, optIdx) {
+  const state = window.quizState[currentLesson.id];
+  if (state.answered.has(qIdx)) return;
+  state.answered.add(qIdx);
+
+  const item = currentLesson.quiz[qIdx];
+  const isCorrect = optIdx === item.correct;
+
+  document.querySelectorAll(`[id^="opt-${currentLesson.id}-${qIdx}-"]`).forEach(el => {
+    el.classList.add('disabled');
+    el.querySelector('input').disabled = true;
+  });
+
+  document.getElementById(`opt-${currentLesson.id}-${qIdx}-${optIdx}`).classList.add(isCorrect ? 'correct' : 'wrong');
+  document.getElementById(`opt-${currentLesson.id}-${qIdx}-${item.correct}`).classList.add('correct');
+  document.getElementById(`exp-${currentLesson.id}-${qIdx}`).classList.add('show');
+
+  const progress = document.getElementById(`progress-${currentLesson.id}`);
+  if (progress) progress.style.width = (state.answered.size / currentLesson.quiz.length * 100) + '%';
+}
+
+function submitLessonQuiz() {
+  const state = window.quizState[currentLesson.id];
+  let score = 0;
+  currentLesson.quiz.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="q-${currentLesson.id}-${i}"]:checked`);
+    if (sel && parseInt(sel.value) === item.correct) score++;
+  });
+
+  const result = document.getElementById(`result-${currentLesson.id}`);
+  result.classList.add('show');
+  document.getElementById(`score-${currentLesson.id}`).textContent = `${score}/${currentLesson.quiz.length}`;
+
+  const percent = (score / currentLesson.quiz.length) * 100;
+  let fb = '';
+  if (percent >= 90) fb = '🏆 Xuất sắc!';
+  else if (percent >= 70) fb = '👍 Khá tốt!';
+  else if (percent >= 50) fb = '📖 Cần ôn thêm.';
+  else fb = '💪 Hãy đọc lại lý thuyết!';
+  document.getElementById(`feedback-${currentLesson.id}`).textContent = fb;
+
+  const bestKey = 'best_' + currentLesson.id;
+  const best = parseInt(localStorage.getItem(bestKey) || '0');
+  if (score > best) {
+    localStorage.setItem(bestKey, score);
+    document.getElementById(`best-${currentLesson.id}`).textContent = `🎉 Kỷ lục mới: ${score}/${currentLesson.quiz.length}`;
+  } else {
+    document.getElementById(`best-${currentLesson.id}`).textContent = `📈 Cao nhất: ${best}/${currentLesson.quiz.length}`;
+  }
+
+  result.scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetLessonQuiz() {
+  window.quizState[currentLesson.id] = { answered: new Set(), correct: 0 };
+  renderModalContent();
+}
+
+// ============ MODAL THÊM BÀI ============
+function openAddModal() {
+  document.getElementById('addModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  // Clear form
+  ['newTitle','newDesc','newContent','newEssay','newQuiz'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('newIcon').value = '📚';
+}
+
+function closeAddModal(e) {
+  if (e && e.target.id !== 'addModal') return;
+  document.getElementById('addModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function saveNewLesson() {
+  const title = document.getElementById('newTitle').value.trim();
+  const desc = document.getElementById('newDesc').value.trim();
+  const icon = document.getElementById('newIcon').value.trim() || '📚';
+  const content = document.getElementById('newContent').value.trim();
+  const essayRaw = document.getElementById('newEssay').value.trim();
+  const quizRaw = document.getElementById('newQuiz').value.trim();
+
+  if (!title) {
+    showToast('⚠️ Vui lòng nhập tiêu đề!');
+    return;
+  }
+
+  // Parse essay
+  const essay = essayRaw ? essayRaw.split('\n').filter(l => l.trim()).map(line => {
+    const parts = line.split('|').map(s => s.trim());
+    return { q: parts[0] || '', a: parts[1] || '' };
+  }) : [];
+
+  // Parse quiz
+  const quiz = quizRaw ? quizRaw.split('\n').filter(l => l.trim()).map(line => {
+    const parts = line.split('|').map(s => s.trim());
+    const correctLetter = (parts[5] || 'A').toUpperCase();
+    const correctIdx = 'ABCD'.indexOf(correctLetter);
+    return {
+      q: parts[0] || '',
+      options: [parts[1] || '', parts[2] || '', parts[3] || '', parts[4] || ''],
+      correct: correctIdx >= 0 ? correctIdx : 0,
+      explain: parts[6] || ''
+    };
+  }) : [];
+
+  const newLesson = {
+    id: 'bai' + Date.now(),
+    icon,
+    title,
+    desc,
+    content: content || '<p>Chưa có nội dung lý thuyết.</p>',
+    essay,
+    quiz,
+    visible: true
+  };
+
+  lessons.push(newLesson);
+  saveLessons();
+  renderLessons();
+  closeAddModal();
+  showToast('✅ Đã thêm bài tập mới!');
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ============ SCROLL ============
+function scrollToLessons() {
+  document.getElementById('lessons').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============ INIT ============
+renderLessons();
+</script>
+</body>
+</html>
